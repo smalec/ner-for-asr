@@ -2,3 +2,5 @@
 .pyc
 .idea
 params.ini
+__pycache__/
+resources/
