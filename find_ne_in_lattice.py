@@ -1,5 +1,5 @@
 from lattice_to_graphs import get_outgoing_edges, lattice_to_graphs
-from names_and_surnames import get_names, get_surnames
+from names_and_surnames import get_names, get_names_variants, get_surnames, get_surnames_variants
 
 
 def find_phrase(phrase, graph):
@@ -40,6 +40,22 @@ def find_person(names, surnames, graph):
     return results
 
 
+def find_all_persons(graph):
+    names = get_names_variants()
+    surnames = get_surnames_variants()
+    results = {}
+    edges = graph["edges"]
+    nodes = graph["nodes"]
+    outgoing_edges = get_outgoing_edges(graph)
+    for edge in edges:
+        if edge["text"] in names:
+            for next_edge in outgoing_edges[edge["to"]]:
+                if next_edge["text"] in surnames and names[edge["text"]] & surnames[next_edge["text"]] != set():
+                    timestamps = (nodes[edge["from"]]["timestamp"], nodes[next_edge["to"]]["timestamp"])
+                    results[timestamps] = " ".join([edge["text"], next_edge["text"]])
+    return results
+
+
 if __name__ == "__main__":
     graphs = lattice_to_graphs("D:\\extracted_lattice.txt", "D:\\sil_split")
-    print(find_person("Janusz", "Mazowiecki", graphs["000"]))
+    print(find_all_persons(graphs["000"]))
