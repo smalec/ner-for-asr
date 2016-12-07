@@ -53,7 +53,18 @@ def find_all_persons(graph):
                 if next_edge["text"] in surnames and names[edge["text"]] & surnames[next_edge["text"]] != set():
                     timestamps = (nodes[edge["from"]]["timestamp"], nodes[next_edge["to"]]["timestamp"])
                     results[timestamps] = " ".join([edge["text"], next_edge["text"]])
-    return results
+    return merge_base_on_timestamps(results)
+
+
+def merge_base_on_timestamps(results):
+    sorted_results = sorted(list(results.keys()))
+    merged = [list(sorted_results[0])]
+    for (start_time, end_time) in sorted_results[1:]:
+        if start_time < merged[-1][1] and merged[-1][1] - start_time >= (end_time - start_time)/2:
+            merged[-1][1] = end_time
+        else:
+            merged.append([start_time, end_time])
+    return [(timestamp[0], timestamp[1]) for timestamp in merged]
 
 
 if __name__ == "__main__":
