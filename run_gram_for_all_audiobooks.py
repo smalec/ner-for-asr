@@ -23,7 +23,8 @@ def run(dir_path, output_dir):
                 file_already_exists = os.path.isfile(file_output_path)
                 if not file_already_exists:
                     gram_output = run_single(file_full_path)
-                    json.dump(gram_output, file_output_path)
+                    with open(file_output_path, 'w') as f:
+                        json.dump(gram_output, f)
                     print("Retrived {}".format(file_full_path))
 
 
