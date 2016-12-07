@@ -36,24 +36,25 @@ def get_annotated_phrases(gram_response, timestamps):
     response_dict = eval(gram_response)
     result = {}
     for paragraph, line_timestamps in zip(response_dict["paragraphs"], timestamps):
-        for phrase in paragraph["phrases"]:
-            if phrase["@type"] == "atomPhrase" and phrase["atom"]["leftWhite"] == "true":
-                del line_timestamps[:2]
-            if phrase["@type"] == "annotatedPhrase":
-                if type(phrase["phrases"]) == list:
-                    count_phrases = len([1 for inner_phrase in phrase["phrases"] if inner_phrase["@type"] != "whitePhrase"])
-                else:
-                    count_phrases = 1
-                if phrase["annotation"]["phraseType"]["$"] == "Person":
-                    phrase["start"], phrase["end"] = line_timestamps[0], line_timestamps[2*count_phrases - 1]
+        if type(paragraph["phrases"]) == list:
+            for phrase in paragraph["phrases"]:
+                if phrase["@type"] == "atomPhrase" and phrase["atom"]["leftWhite"] == "true":
+                    del line_timestamps[:2]
+                if phrase["@type"] == "annotatedPhrase":
                     if type(phrase["phrases"]) == list:
-                        joined_phrase = ""
-                        for inner_phrase in phrase["phrases"]:
-                            joined_phrase += inner_phrase["whites"] if "whites" in inner_phrase else inner_phrase["atom"]["text"]
-                        result[(float(line_timestamps[0]), float(line_timestamps[2*count_phrases - 1]))] = joined_phrase
+                        count_phrases = len([1 for inner_phrase in phrase["phrases"] if inner_phrase["@type"] != "whitePhrase"])
                     else:
-                        result[(float(line_timestamps[0]), float(line_timestamps[2*count_phrases - 1]))] = phrase["phrases"]["atom"]["text"]
-                del line_timestamps[:2*count_phrases]
+                        count_phrases = 1
+                    if phrase["annotation"]["phraseType"]["$"] == "Person":
+                        phrase["start"], phrase["end"] = line_timestamps[0], line_timestamps[2*count_phrases - 1]
+                        if type(phrase["phrases"]) == list:
+                            joined_phrase = ""
+                            for inner_phrase in phrase["phrases"]:
+                                joined_phrase += inner_phrase["whites"] if "whites" in inner_phrase else inner_phrase["atom"]["text"]
+                            result[(float(line_timestamps[0]), float(line_timestamps[2*count_phrases - 1]))] = joined_phrase
+                        else:
+                            result[(float(line_timestamps[0]), float(line_timestamps[2*count_phrases - 1]))] = phrase["phrases"]["atom"]["text"]
+                    del line_timestamps[:2*count_phrases]
     return result
 
 
