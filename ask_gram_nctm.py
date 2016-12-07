@@ -51,9 +51,9 @@ def get_annotated_phrases(gram_response, timestamps):
                             joined_phrase = ""
                             for inner_phrase in phrase["phrases"]:
                                 joined_phrase += inner_phrase["whites"] if "whites" in inner_phrase else inner_phrase["atom"]["text"]
-                            result[(float(line_timestamps[0]), float(line_timestamps[2*count_phrases - 1]))] = joined_phrase
+                            result[str((line_timestamps[0], line_timestamps[2*count_phrases - 1]))] = joined_phrase
                         else:
-                            result[(float(line_timestamps[0]), float(line_timestamps[2*count_phrases - 1]))] = phrase["phrases"]["atom"]["text"]
+                            result[str((line_timestamps[0], line_timestamps[2*count_phrases - 1]))] = phrase["phrases"]["atom"]["text"]
                     del line_timestamps[:2*count_phrases]
     return result
 
