@@ -24,6 +24,7 @@ def run(dir_path, output_dir):
                 if not file_already_exists:
                     gram_output = run_single(file_full_path)
                     json.dump(gram_output, file_output_path)
+                    print("Retrived {}".format(file_full_path))
 
 
 if __name__ == "__main__":
