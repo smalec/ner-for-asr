@@ -22,10 +22,14 @@ def run(dir_path, output_dir):
                 file_output_path = os.path.join(output_dir, file_relative_path[:-12] + ".json")
                 file_already_exists = os.path.isfile(file_output_path)
                 if not file_already_exists:
-                    gram_output = run_single(file_full_path)
-                    with open(file_output_path, 'w') as f:
-                        json.dump(gram_output, f)
-                    print("Retrived {}".format(file_full_path))
+                    try:
+                        gram_output = run_single(file_full_path)
+                        with open(file_output_path, 'w') as f:
+                            json.dump(gram_output, f)
+                        print("Retrived {}".format(file_full_path))
+                    except Exception as e:
+                        print("Error during processing {}".format(file_full_path))
+                        print("Exception: {}".format(e))
 
 
 if __name__ == "__main__":
